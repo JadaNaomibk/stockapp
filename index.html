@@ -12,8 +12,29 @@
     <p class="sub">Made by Jada Naomi</p>
   </header>
 
-  <main class="container">
-    <section class="card"><h2>Boot Check</h2><p>Visuals Loading...</p></section>
+    <main class="container">
+  <section class="card">
+    <h2>1) Create / Update Store</h2>
+    <form id="storeForm">
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;">
+        <label>Store Name <input id="storeName" type="text" required /></label>
+        <label>Contact Email <input id="storeEmail" type="email" required /></label>
+        <label>Address <input id="storeAddress" type="text" required /></label>
+        <label>Tagline <input id="storeTagline" type="text" /></label>
+      </div>
+      <div style="margin-top:.75rem;display:flex;gap:.5rem;">
+        <button type="submit">Save Store</button>
+        <button type="button" id="clearAll" class="secondary">Clear All Stores</button>
+      </div>
+      <p class="sub">Only store data is saved to localStorage.</p>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Stores</h2>
+    <ul id="storeList" style="padding-left:1rem;"></ul>
+  </section>
+
   </main>
 
   <footer class="app-footer">

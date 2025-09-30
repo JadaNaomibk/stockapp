@@ -1,19 +1,33 @@
-import { loadState } from './storage.js';
-import { createOrUpdateStore, listStores } from './storeModel.js';
+import { clearAll, loadState } from './storage.js';
+import { createOrUpdateStore } from './storeModel.js';
+import { renderStoreList } from './ui.js';
 
-console.log('boot ok');
-const state = loadState();
+const storeForm = document.getElementById('storeForm');
+const clearAllBtn = document.getElementById('clearAll');
+const storeList = document.getElementById('storeList');
 
-// create a demo store 
-if(listStores().length === 0){
-  createOrUpdateStore({
-    name: 'Jada Boutique',
-    email: 'owner@demo.com',
-    address: '123 Main St, New York, NY',
-    tagline: 'Curated looks'
-  });
-  console.log('demo store created');
-} else {
-  console.log('store(s) already present');
+function initialLoad(){
+  loadState();
+  renderStoreList(storeList);
 }
-console.log('stores:', listStores());
+initialLoad();
+
+storeForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const name = document.getElementById('storeName').value.trim();
+  const email = document.getElementById('storeEmail').value.trim();
+  const address = document.getElementById('storeAddress').value.trim();
+  const tagline = document.getElementById('storeTagline').value.trim();
+  if(!name || !email || !address) return;
+  createOrUpdateStore({name,email,address,tagline});
+  renderStoreList(storeList);
+  storeForm.reset();
+  alert('Store saved!');
+});
+
+clearAllBtn.addEventListener('click', ()=>{
+  if(confirm('Delete ALL demo data?')){
+    clearAll();
+    renderStoreList(storeList);
+  }
+});
