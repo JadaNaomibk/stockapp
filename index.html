@@ -2,57 +2,164 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Fashion API — Store Console </title>
+  <title>Fashion API — Store Console</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0b0c" />
   <link href="./styles.css" rel="stylesheet" />
+  <!-- Initial soft hide for splash transition -->
+  <style>
+    body.loading { opacity: 0; transition: opacity 450ms ease; }
+    .hidden { display: none !important; }
+  </style>
 </head>
-<body>
-  <header class="app-header">
-    <h1>Fashion API — Store Console</h1>
+<body class="loading">
+  <!-- Animated background layers (decorative only) -->
+  <div class="bg fx-gradient" aria-hidden="true"></div>
+  <div class="bg fx-blobs" aria-hidden="true">
+    <span class="blob b1" aria-hidden="true"></span>
+    <span class="blob b2" aria-hidden="true"></span>
+    <span class="blob b3" aria-hidden="true"></span>
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Global toast (success) -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <header class="app-header" aria-label="App header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <span class="ring"></span>
+        <span class="dot"></span>
+      </div>
+      <h1 class="wordmark">Fashion API</h1>
+    </div>
     <p class="sub">Made by Jada Naomi</p>
   </header>
 
-    <main class="container">
-  <section class="card">
-    <h2>1) Create / Update Store</h2>
-    <form id="storeForm">
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;">
-        <label>Store Name <input id="storeName" type="text" required /></label>
-        <label>Contact Email <input id="storeEmail" type="email" required /></label>
-        <label>Address <input id="storeAddress" type="text" required /></label>
-        <label>Tagline <input id="storeTagline" type="text" /></label>
+  <main class="container" aria-live="polite" role="main">
+    <!-- SPLASH -->
+    <section id="splash" class="card splash" data-state="visible" aria-label="Splash screen">
+      <div class="splash-inner">
+        <h2 class="hero">Fashion API</h2>
+        <p class="sub">curating drops • sales • creators</p>
+        <div class="pulse" aria-hidden="true"></div>
       </div>
-      <div style="margin-top:.75rem;display:flex;gap:.5rem;">
-        <button type="submit">Save Store</button>
-        <button type="button" id="clearAll" class="secondary">Clear All Stores</button>
+    </section>
+
+    <!-- CREATE STORE -->
+    <section id="createStoreCard" class="card reveal" data-delay="100" data-state="hidden" aria-labelledby="create-store-title">
+      <div class="card-head">
+        <h2 id="create-store-title">Create Your Store</h2>
+        <p class="sub">Your HQ, locations, and store type—then you’re live.</p>
       </div>
-      <p class="sub">Only store data is saved to localStorage.</p>
-    </form>
-  </section>
 
-  <section class="card">
-    <h2>Stores</h2>
-    <ul id="storeList" style="padding-left:1rem;"></ul>
-  </section>
+      <form id="storeForm" class="form" autocomplete="off" novalidate>
+        <div class="grid2">
+          <label for="storeName">Store Name
+            <input id="storeName" name="storeName" type="text" required maxlength="60" aria-required="true" />
+          </label>
+          <label for="storeEmail">Contact Email
+            <input id="storeEmail" name="storeEmail" type="email" required maxlength="120" aria-required="true" />
+          </label>
+          <label for="storeAddress">Headquarters (HQ) Address
+            <input id="storeAddress" name="storeAddress" type="text" required maxlength="140" aria-required="true" />
+          </label>
+          <label for="storeTagline">Tagline
+            <input id="storeTagline" name="storeTagline" type="text" maxlength="120" />
+          </label>
+        </div>
 
-  <section class="card">
-  <h2>Map</h2>
-  <div style="display:flex;gap:.5rem;align-items:center;">
-    <input id="mapAddress" type="text" placeholder="Paste an address or select a store then paste" style="flex:1;" />
-    <button id="showMapBtn">Show Map</button>
-  </div>
-  <div class="mapwrap" style="margin-top:.75rem;border:1px solid var(--line);border-radius:12px;overflow:hidden;">
-    <iframe id="mapFrame" loading="lazy" title="Store Map" style="width:100%;height:360px;border:0;background:white;"></iframe>
-  </div>
-</section>
+        <fieldset class="tags" aria-labelledby="store-tags-legend">
+          <legend id="store-tags-legend">Store Type / Tags</legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="tags" value="luxury" /> Luxury</label>
+            <label class="chip"><input type="checkbox" name="tags" value="mid-range" /> Mid-range</label>
+            <label class="chip"><input type="checkbox" name="tags" value="womens" /> Womens</label>
+            <label class="chip"><input type="checkbox" name="tags" value="mens" /> Mens</label>
+            <label class="chip"><input type="checkbox" name="tags" value="streetwear" /> Streetwear</label>
+            <label class="chip"><input type="checkbox" name="tags" value="kids" /> Kids</label>
+            <label class="chip"><input type="checkbox" name="tags" value="home" /> Home</label>
+            <label class="chip"><input type="checkbox" name="tags" value="sustainable" /> Sustainable</label>
+          </div>
+        </fieldset>
 
+        <div class="grid2">
+          <label for="storeExtraLocation">Additional Location (optional)
+            <input id="storeExtraLocation" name="storeExtraLocation" type="text" placeholder="Add another address, press + to save" maxlength="140" />
+          </label>
+          <button type="button" id="addLocationBtn" class="btn secondary" aria-label="Add additional location">+ Add Location</button>
+        </div>
 
+        <ul id="locationList" class="pill-list" aria-live="polite" aria-label="Added locations"></ul>
+
+        <div class="actions">
+          <button type="submit" id="saveStoreBtn" class="btn primary">
+            <span class="btn-glow" aria-hidden="true"></span>
+            Create Store
+          </button>
+        </div>
+
+        <!-- Success line is announced politely when it appears -->
+        <p id="createSuccess" class="sub hidden" aria-live="polite">
+          ✅ Store created successfully! It’s now part of your NEW API.
+        </p>
+      </form>
+    </section>
+
+    <!-- HOME FEED -->
+    <section id="homeFeedCard" class="card reveal hidden" data-delay="200" data-state="hidden" aria-labelledby="home-title">
+      <div class="card-head">
+        <h2 id="home-title">Home</h2>
+        <p class="sub">ASOS (stub) + your stores + latest inventory.</p>
+      </div>
+
+      <div class="pane">
+        <h3 class="pane-title">ASOS — Latest Drops (Stub)</h3>
+        <div id="asosFeed" class="feed" aria-label="ASOS feed"></div>
+      </div>
+
+      <div class="pane">
+        <h3 class="pane-title">Your Stores</h3>
+        <ul id="storeList" class="list" aria-label="Stores"></ul>
+      </div>
+
+      <div class="pane">
+        <h3 class="pane-title">Inventory</h3>
+        <div id="homeInventory" class="gridCards" aria-label="Recent inventory"></div>
+      </div>
+    </section>
   </main>
 
   <footer class="app-footer">
-    <small> Created by Jada  • localStorage only</small>
+    <small>Created by Jada • localStorage only • <a href="./inventory.html">Go to Inventory</a></small>
   </footer>
 
+  <!-- Your main module handles splash timing and create flow -->
   <script type="module" src="./modules/main.js"></script>
+
+  <!-- Safety net: if main.js didn’t run yet, gracefully reveal create after 3s -->
+  <script>
+    (function () {
+      const ranFlag = '__fa_main_booted__';
+      // main.js should set window[ranFlag] = true when it runs.
+      window.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+          if (window[ranFlag]) return; // main.js already took over
+          document.body.classList.remove('loading');
+          const splash = document.getElementById('splash');
+          const create = document.getElementById('createStoreCard');
+          if (splash) splash.setAttribute('data-state', 'hidden');
+          if (create) {
+            create.classList.remove('hidden');
+            requestAnimationFrame(() => create.setAttribute('data-state','visible'));
+          }
+        }, 3000);
+      });
+    })();
+  </script>
+
+  <noscript>
+    <p style="padding:1rem; text-align:center;">This app requires JavaScript to run.</p>
+  </noscript>
 </body>
 </html>
