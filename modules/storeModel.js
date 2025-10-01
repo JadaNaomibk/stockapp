@@ -1,18 +1,63 @@
-import { loadState, saveState } from './storage.js';
+// modules/storeModel.js
+export function uuid() {
+  if (window.crypto?.getRandomValues) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = crypto.getRandomValues(new Uint8Array(1))[0] & 15;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+  let t = Date.now();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, ch => {
+    const r = (t + Math.random() * 16) % 16 | 0; t = Math.floor(t/16);
+    const v = ch === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
-export function createOrUpdateStore({name,email,address,tagline}){
-  const state = loadState();
-  const existing = state.stores.find(s => s.name.toLowerCase() === String(name).toLowerCase());
-  const rec = { id: existing? existing.id : Date.now(), name:String(name), email:String(email), address:String(address), tagline:String(tagline||'') };
-  if(existing){ state.stores[state.stores.findIndex(s=>s.id===existing.id)] = rec; } else { state.stores.push(rec); }
-  saveState(state); return rec;
+export function newStore({ name, email, address, tagline = '', storeType = 'mid-range', locations = [] }) {
+  const id = uuid();
+  const t = new Date().toISOString();
+  return {
+    id,
+    name: String(name || '').trim(),
+    email: String(email || '').trim(),
+    address: String(address || '').trim(),
+    tagline: String(tagline || ''),
+    storeType: String(storeType || 'mid-range'),
+    locations: Array.isArray(locations) ? locations : [],
+    createdAt: t, updatedAt: t
+  };
 }
-export function listStores(){ const s = loadState().stores; return [...s].sort((a,b)=>a.name.localeCompare(b.name)); }
-export function addItem({storeId,productName,price,tags,filesMeta}){
-  const state = loadState();
-  const item = { id: Date.now(), storeId, productName:String(productName), price:Number(price), tags:String(tags||''), photos:Array.isArray(filesMeta)?filesMeta:[] };
-  state.items.push(item); saveState(state); return item;
+
+export function updateStore(oldStore, patch) {
+  return { ...oldStore, ...patch, updatedAt: new Date().toISOString() };
 }
-export function listItemsByStore(storeId){ return loadState().items.filter(i=>i.storeId===storeId); }
-export function postSale({storeId,note}){ const st=loadState(); const sale={id:Date.now(),storeId,note:String(note||''),ts:new Date().toISOString()}; st.sales.unshift(sale); saveState(st); return sale; }
-export function listSales(){ return loadState().sales; }
+
+export const CATEGORIES = ['womens','mens','home','accessories','sale'];
+export const ITEM_TAGS = ['shirt','bottom','outerwear','dress','shoes','accessories','kids','home','streetwear'];
+
+export function newItem({ storeId, title, price, category, image = '', desc = '', tags = [] }) {
+  if (!CATEGORIES.includes(category)) throw new Error('Invalid category');
+  const id = uuid();
+  return {
+    id, storeId,
+    title: String(title || '').trim(),
+    price: Number(price),
+    category,
+    image: String(image || ''),
+    desc: String(desc || ''),
+    tags: Array.from(new Set(tags.filter(Boolean).map(String))),
+    createdAt: new Date().toISOString()
+  };
+}
+
+export function newAnnouncement({ storeId, type, title, body = '' }) {
+  if (!['drop','sale','event'].includes(type)) throw new Error('Invalid announcement type');
+  return {
+    id: uuid(), storeId, type,
+    title: String(title || '').trim(),
+    body: String(body || ''),
+    createdAt: new Date().toISOString()
+  };
+}
