@@ -3,6 +3,6 @@
 // Get your key from RapidAPI dashboard; keep the host exactly as shown here.
 export const RAPID = {
   KEY: '455c58eda9mshebe29cc79055f16p179006jsne7bac83daf6a',
-  HOST: 'yahoo-finance15.p.rapidapi.com'
+  HOST: 'yahoo-finance1.p.rapidapi.com'
 };
 

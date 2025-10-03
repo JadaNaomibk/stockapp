@@ -1,4 +1,6 @@
-const BASE = 'https://68dfd662898434f413591975.mockapi.io/sapi'; 
+const BASE = 'https://68dfea7893207c4b47932686.mockapi.io/api/v1';
+const RESOURCE = 'watchlist'; 
+
 
 async function jsonFetch(url, opts = {}) {
   const res = await fetch(url, {
