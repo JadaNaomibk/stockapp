@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stock App — JS Only</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>📈 Stock App</h1>
+      <form id="searchForm" autocomplete="off" aria-label="Search ticker">
+        <input id="tickerInput" placeholder="AAPL, TSLA, NVDA..." aria-label="Ticker input" />
+        <button type="submit">Search</button>
+      </form>
+    </header>
+
+    <main class="container">
+      <section>
+        <h2>Results</h2>
+        <div id="results" role="region" aria-live="polite"></div>
+        <div class="pager">
+          <button id="prevBtn" disabled>Prev</button>
+          <span id="pageLabel">Page 1</span>
+          <button id="nextBtn" disabled>Next</button>
+        </div>
+      </section>
+
+      <aside>
+        <h2>Watchlist</h2>
+        <div id="watchlist"></div>
+      </aside>
+    </main>
+
+    <footer class="footer">Powered by FMP (demo) + MockAPI</footer>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
