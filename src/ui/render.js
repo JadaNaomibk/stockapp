@@ -29,21 +29,25 @@ export function renderPageLabel(page) {
 }
 
 export function renderWatchlist(items) {
+  const watchEl = document.getElementById('watchlist');
   watchEl.innerHTML = '';
   for (const it of items) {
     const row = document.createElement('div');
     row.className = 'card';
     row.innerHTML = `
-      <div>
+      <div class="fields">
         <div class="symbol">${it.symbol}</div>
-        <label>Note <input data-act="note" data-id="${it.id}" value="${it.note ?? ''}" /></label>
-        <label>Rating <input type="number" min="0" max="5" step="1" data-act="rating" data-id="${it.id}" value="${it.rating ?? 0}" /></label>
+        <label>Note
+          <input class="text" data-act="note" data-id="${it.id}" value="${it.note ?? ''}" />
+        </label>
+        <label>Rating
+          <input class="number" type="number" min="0" max="5" step="1" data-act="rating" data-id="${it.id}" value="${it.rating ?? 0}" />
+        </label>
       </div>
-      <div>
+      <div class="actions">
         <button class="btn" data-act="save" data-id="${it.id}">Save</button>
         <button class="btn danger" data-act="del" data-id="${it.id}">Delete</button>
       </div>`;
     watchEl.appendChild(row);
   }
 }
- 

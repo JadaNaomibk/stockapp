@@ -19,3 +19,48 @@ section, aside { background: var(--surface); border-radius:12px; padding:1rem; }
 .pager { display:flex; gap:.5rem; align-items:center; justify-content:center; margin-top:.75rem; }
 .error { color: var(--danger); margin:.5rem 0; }
 small.muted { color: var(--muted); }
+
+
+#watchlist .card {
+  display: grid;
+  grid-template-columns: 1fr 120px; /* fields | actions */
+  gap: .75rem 1rem;
+  align-items: start;
+}
+
+#watchlist .symbol {
+  margin-bottom: .25rem;
+  font-weight: 700;
+}
+
+#watchlist label {
+  display: block;
+  font-size: .85rem;
+  color: var(--muted);
+  margin-top: .5rem;
+}
+
+#watchlist input.text,
+#watchlist input.number,
+#watchlist input[type="text"],
+#watchlist input[type="number"] {
+  width: 100%;
+  padding: .45rem .55rem;
+  border-radius: 8px;
+  border: 1px solid #2a2a34;
+  background: #101016;
+  color: var(--text);
+  outline: none;
+}
+
+#watchlist .actions {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  align-items: stretch;
+}
+
+#watchlist .actions .btn { width: 100%; }
+
+
+.container { grid-template-columns: 1fr 320px; }
